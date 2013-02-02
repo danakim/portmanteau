@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Portmanteau</title>
+        <title>portmanteau.ro</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta name="description" content="Awesome Description Here" />
+        <meta name="description" content="O lecție despre urbanism schițofrenic" />
         <meta name="keywords" content="bucuresti,bucharest,portmanteau,casa poporului,people's house,centrul civic,civic centre,victoria socialismului,comunism,communism,demolari,distrugere,destruction" />
         <link rel="icon" type="image/ico" href="favicon.ico" />
         <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
@@ -13,38 +13,43 @@
             body {
                 font-family: monospace;
                 font-size: 14px;
-                background-image:url('background.png');
             }
             #map_canvas {
+                position: absolute;
+                top: 127px;
+                left: 9px;
                 height: 600px;
-                width: 1200px;
-                margin-top: 0.6em;
+                width: 1198px;
             }
             input {
                 border: 1px rgba(0, 0, 0, 1);
                 border-style: dotted;
                 background-image: url('search.png');
-                background-position: 1182px;
+                background-position: 1176px;
                 background-size: 18px 18px;
                 background-repeat: no-repeat;
                 font-family: monospace;
                 font-size: 13px;
-                margin-top: 85px;
                 height: 20px;
-                width: 1198px;
+                width: 1196px;
+                position: absolute;
+                top: 93px;
+                left: 9px;
             }
             input.notfound {
                 border: 1px solid  rgba(255, 0, 0, 0.4);
                 border-style: dotted;
                 background-image: url('search.png');
-                background-position: 1182px;
+                background-position: 1176px;
                 background-size: 18px 18px;
                 background-repeat: no-repeat;
                 font-family: monospace;
                 font-size: 13px;
-                margin-top: 85px;
                 height: 20px;
-                width: 1198px;
+                width: 1196px;
+                position: absolute;
+                top: 93px;
+                left: 9px;
             }
         </style>
 
@@ -205,33 +210,37 @@
         <div>
             <input id="searchTextField" type="text" size="150">
         </div>
-        <div id="population" name="population" title="Populație stramutată" style="font-family:monospace; font-size:38px; font-weight:bold; border:hidden; position:absolute; top:30px; right:420px;";>
+        <div id="population_icon" style="position:absolute; top:22px; left:853px">
+            <img src="population.png" height="48" width="52">
+        </div>
+        <div id="population" name="population" title="Populație stramutată" style="font-family:monospace; font-size:38px; font-weight:bold; border:hidden; position:absolute; top:30px; left:900px;";>
             30600
         </div>
-        <div id="area" name="area" title="Suprafața construita" style="font-family:monospace; font-size:38px; font-weight:bold; border:hidden; position:absolute; top:30px; right:226px;";>
+        <div id="area_icon" style="position:absolute; top:22px; left:1040px">
+            <img src="surface.png" height="50" width="64">
+        </div>
+        <div id="area" name="area" title="Suprafața construita" style="font-family:monospace; font-size:38px; font-weight:bold; border:hidden; position:absolute; top:30px; left:1104px;";>
             1.6%
         </div>
-        <div id="random" style="position:absolute; top:93px; right:102px">
+        <div id="random" style="position:absolute; top:93px; left:1221px">
             <img src="button_random.png" height="25" width="114">
         </div>
         <div id="map_canvas"></div>
-        <div id="upper_text" name="upper_text" style="font-family:monospace; font-size:11px; border:hidden; position:absolute; top:12px; right:10px; height:75px; width:205px";>
-            Simbolurile reprezintă numărul de oameni strămutați pentru a face loc proiectului relativ la densitatea medie și procentul ocupat relativ la suprafața ariei urbanizate.
+        <div id="upper_text" name="upper_text" style="font-family:monospace; font-size:11px; border:hidden; position:absolute; top:8px; left:1219px; height:73px; width:205px";>
+            Simbolurile reprezintă numărul de oameni strămutați pentru a face loc proiectului relativ la densitatea medie și procentul ocupat relativ la suprafața orasului.
         </div>
-        <div id="lower_text" name="lower_text" style="font-family:monospace; font-size:11px; border:hidden; position:absolute; top:135px; right:10px; height:588px; width:205px";>
-            <b>Despre:</b> Proiectul marcat în imagine este poate cea mai violentă cicatrice făcută de un regim totalitar în carnea unei capitale făcând din București orașul european cel mai devastat pe timp de pace. Un "Centru Civic" megaloman, o materializare a unei viziuni nord coreene asupra modernității. Supranumit și "Victoria Socialismului", este organizat de-a lungul unei axe care scurtcircuitează scara și structura moștenită a orașului, ascunzându-l pe acesta din urmă în spatele unei mantii decorate cu ordin colosal, pentru a stabili o nouă ierarhie în vârful căreia tronează schițofrenică cea mai mare clădire administrativă din Europa cunoscută de noi drept "Casa Poporului", azi "Palatul Parlamentului". Acest proiect este bagajul nostru, al bucureștenilor, iar întrebarea de la care am plecat a fost <b>"Ce s-ar întâmpla dacă ne-am lua bagajul după noi în lume?"</b>
-            <p></br></br><b>Instructiuni:</b> Folosește bara de căutare pentru a schimba orașul. Desenul se va proiecta peste destinația aleasă păstrându-și scara, poziția fiind ancorată relativ la punctul de centru al urbanizării. Pentru a muta desenul, fă click stânga pe imagine și mută markerul proaspăt apărut pe noua coordonată. Încă un click și markerul dispare. Butonul "Random" te ajută în lipsă de inspirație!</p>
-        </div>
-        <div id="name_text" name="name_text" title="Autori" style="font-family:monospace; font-size:12px; border:hidden; position:absolute; top:732px; right:10px; width:205px; height:37px";>
+        <div id="lower_text" name="lower_text" style="font-family:monospace; font-size:11px; border:hidden; position:absolute; top:132px; left:1219px; height:585px; width:205px";>
+            <b>Despre:</b> Proiectul marcat în imagine este poate cea mai violentă cicatrice făcută de un regim totalitar în carnea unei capitale făcând din București orașul european cel mai devastat pe timp de pace. Un "Centru Civic" megaloman, o materializare a unei viziuni nord coreene asupra modernității. Supranumit și "Victoria Socialismului", este organizat de-a lungul unei axe monumentale care scurtcircuitează scara și structura moștenită a orașului, ascunzându-l pe acesta din urmă în spatele unei mantii decorate cu ordin colosal, pentru a stabili o nouă ierarhie în vârful căreia tronează schițofrenică cea mai mare clădire administrativă din Europa cunoscută de noi drept "Casa Poporului", azi "Palatul Parlamentului". Acest proiect este bagajul nostru, al bucureștenilor, iar întrebarea de la care am plecat a fost <b>"Ce s-ar întâmpla dacă ne-am lua bagajul după noi în lume?"</b>
+            <p><b>Instructiuni:</b> Folosește bara de căutare pentru a schimba orașul. Desenul se va proiecta peste destinația aleasă păstrându-și scara, poziția fiind ancorată relativ la punctul de centru al urbanizării. Pentru a muta desenul, fă click stânga pe imagine și mută markerul proaspăt apărut pe noua coordonată. Încă un click și markerul dispare. Butonul "Random" te ajută în lipsă de inspirație!</p>
             <b>Concept și design:</br></b>Bogdan Ilie</br>Dan Achim
         </div>
-        <div id="ro_lang" style="margin-top:12px; position:absolute; left:8px;";>
+        <div id="ro_lang" style="position:absolute; top:735px; left:9px;";>
             <a style="text-decoration:none;" type="icon_link" href="http://www.portmanteau.ro/en"><img style="width:70px; height:30px;" src="button_ro.png"/></a>
         </div>
-        <div id="facebook_button" style="margin-top:12px; position:absolute; left:1142px;";>
-            <a target="_blank" style="text-decoration:none;" type="icon_link" href="http://www.facebook.com/sharer.php?s=100&p[title]=testtitle&p[url]=www.portmanteau.ro&p[summary]=testsummary&p[images][0]=http://www.hostatic.ro/00_portmanteau_logo.png"><img style="width:30px; height:30px;" src="button_fb.png"/></a>
+        <div id="facebook_button" style="position:absolute; top:735px; left:1142px;";>
+            <a target="_blank" style="text-decoration:none;" type="icon_link" href="http://www.facebook.com/sharer.php?s=100&p[title]=O lecție despre urbanism schițofrenic&p[url]=portmanteau.ro&p[images][0]=http://www.hostatic.ro/00_portmanteau_logo.png"><img style="width:30px; height:30px;" src="button_fb.png"/></a>
         </div>
-        <div id="twitter_button" style="margin-top:12px; position:absolute; left:1178px;";>
+        <div id="twitter_button" style="position:absolute; top:735px; left:1177px;";>
             <a target="_blank" style="text-decoration:none;" type="icon_link" href="https://twitter.com/share?url=http://www.portmanteau.ro"><img style="width:30px; height:30px;" src="button_tw.png"/></a>
         </div>
     </body>
