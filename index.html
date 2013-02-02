@@ -200,6 +200,8 @@
             }
 
             function random() {
+                    var searchBox = document.getElementById("searchTextField");
+                    searchBox.value = "Randomizing..."
                     $(document).ready(function() {
                         $.ajax({
                             type: "GET",
@@ -243,7 +245,6 @@
                                 surface_displaced = ((parseFloat(4.50) / parseFloat(cityArea)) * parseFloat(100)).toFixed(1);
                                 document.getElementById("area").innerHTML = surface_displaced + "%"
                                 document.getElementById("population").innerHTML = population_displaced
-                                var searchBox = document.getElementById("searchTextField");
                                 searchBox.value = cityCountry;
                                 addClickListener(map_center);
                             }
