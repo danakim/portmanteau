@@ -199,6 +199,58 @@
                 });
             }
 
+            function random() {
+                    $(document).ready(function() {
+                        $.ajax({
+                            type: "GET",
+                            url: "city_database.txt",
+                            dataType: "text",
+                            success: function(data) {getRandom(data);}
+                        });
+                    });
+                    function getRandom(csv_data) {
+                        // Get a random city object from the array, map it and set variables accordingly
+                        var cities = [];
+                        var cities = $.csv.toObjects(csv_data);
+                        var random_city = [];
+                        var random_city = cities[Math.floor(Math.random() * cities.length)];
+                        var city = $.map(random_city, function(val) {
+                            return val;
+                        });
+                        cityName = city[0];
+                        cityArea = city[2];
+                        cityDensity = city[3];
+                        // Generate the JSON url to GET from the Google geocoding service using the random city name
+                        var json_url = "http://maps.googleapis.com/maps/api/geocode/json?address=" + cityName + "&sensor=false";
+                        // Actually get the JSON url, parse it and use the info to set the image on the map and display all the other info
+                        $.ajax({
+                            type: 'GET',
+                            url: json_url,
+                            dataType: 'json',
+                            success: function(data) {
+                                var lat = data.results[0].geometry.location.lat;
+                                var lng = data.results[0].geometry.location.lng;
+                                var cityCountry = data.results[0].formatted_address;
+                                var map_center = new google.maps.LatLng(lat,lng);
+                                // Place the image on the map at the random location
+                                cleanMarker();
+                                image_clicked = 0;
+                                building_image.setMap(null);
+                                map.setCenter(map_center);
+                                map.setZoom(14);
+                                setImage(map_center);
+                                population_displaced = parseFloat(4.50) * parseFloat(cityDensity);
+                                surface_displaced = ((parseFloat(4.50) / parseFloat(cityArea)) * parseFloat(100)).toFixed(1);
+                                document.getElementById("area").innerHTML = surface_displaced + "%"
+                                document.getElementById("population").innerHTML = population_displaced
+                                var searchBox = document.getElementById("searchTextField");
+                                searchBox.value = cityCountry;
+                                addClickListener(map_center);
+                            }
+                        });
+                    }
+            }
+
             // On DOM window load, run all of the above
             google.maps.event.addDomListener(window, 'load', initialize);
         </script>
@@ -223,7 +275,7 @@
             1.6%
         </div>
         <div id="random" style="position:absolute; top:93px; left:1221px">
-            <img src="button_random.png" height="25" width="114">
+            <a href="#" onClick="random()"><img src="button_random.png" height="25" width="114" /></a>
         </div>
         <div id="map_canvas"></div>
         <div id="upper_text" name="upper_text" style="font-family:monospace; font-size:11px; border:hidden; position:absolute; top:8px; left:1219px; height:73px; width:205px";>
@@ -231,14 +283,14 @@
         </div>
         <div id="lower_text" name="lower_text" style="font-family:monospace; font-size:11px; border:hidden; position:absolute; top:132px; left:1219px; height:585px; width:205px";>
             <b>Despre:</b> Proiectul marcat în imagine este poate cea mai violentă cicatrice făcută de un regim totalitar în carnea unei capitale făcând din București orașul european cel mai devastat pe timp de pace. Un "Centru Civic" megaloman, o materializare a unei viziuni nord coreene asupra modernității. Supranumit și "Victoria Socialismului", este organizat de-a lungul unei axe monumentale care scurtcircuitează scara și structura moștenită a orașului, ascunzându-l pe acesta din urmă în spatele unei mantii decorate cu ordin colosal, pentru a stabili o nouă ierarhie în vârful căreia tronează schițofrenică cea mai mare clădire administrativă din Europa cunoscută de noi drept "Casa Poporului", azi "Palatul Parlamentului". Acest proiect este bagajul nostru, al bucureștenilor, iar întrebarea de la care am plecat a fost <b>"Ce s-ar întâmpla dacă ne-am lua bagajul după noi în lume?"</b>
-            <p><b>Instructiuni:</b> Folosește bara de căutare pentru a schimba orașul. Desenul se va proiecta peste destinația aleasă păstrându-și scara, poziția fiind ancorată relativ la punctul de centru al urbanizării. Pentru a muta desenul, fă click stânga pe imagine și mută markerul proaspăt apărut pe noua coordonată. Încă un click și markerul dispare. Butonul "Random" te ajută în lipsă de inspirație!</p>
+            <p><b>Instructiuni:</b> Folosește bara de căutare pentru a schimba orașul. Desenul se va proiecta peste destinația aleasă păstrându-și scara, poziția fiind ancorată relativ la punctul de centru al orasului. Pentru a muta desenul, fă click stânga pe imagine și mută markerul proaspăt apărut pe noua coordonată. Încă un click și markerul dispare. Butonul "Random" te ajută în lipsă de inspirație!</p>
             <b>Concept și design:</br></b>Bogdan Ilie</br>Dan Achim
         </div>
         <div id="ro_lang" style="position:absolute; top:735px; left:9px;";>
-            <a style="text-decoration:none;" type="icon_link" href="http://www.portmanteau.ro/en"><img style="width:70px; height:30px;" src="button_ro.png"/></a>
+            <a style="text-decoration:none;" type="icon_link" href="http://www.portmanteau.ro/en"><img style="width:70px; height:30px;" src="button_en.png"/></a>
         </div>
         <div id="facebook_button" style="position:absolute; top:735px; left:1142px;";>
-            <a target="_blank" style="text-decoration:none;" type="icon_link" href="http://www.facebook.com/sharer.php?s=100&p[title]=O lecție despre urbanism schițofrenic&p[url]=portmanteau.ro&p[images][0]=http://www.hostatic.ro/00_portmanteau_logo.png"><img style="width:30px; height:30px;" src="button_fb.png"/></a>
+            <a target="_blank" style="text-decoration:none;" type="icon_link" href="http://www.facebook.com/sharer.php?s=100&p[title]=O lecție despre urbanism schițofrenic&p[url]=portmanteau.ro&p[images][0]=http://www.portmanteau.ro/portmanteau_logo.png"><img style="width:30px; height:30px;" src="button_fb.png"/></a>
         </div>
         <div id="twitter_button" style="position:absolute; top:735px; left:1177px;";>
             <a target="_blank" style="text-decoration:none;" type="icon_link" href="https://twitter.com/share?url=http://www.portmanteau.ro"><img style="width:30px; height:30px;" src="button_tw.png"/></a>
