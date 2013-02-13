@@ -222,32 +222,26 @@
                         cityName = city[0];
                         cityArea = city[2];
                         cityDensity = city[3];
-                        // Generate the JSON url to GET from the Google geocoding service using the random city name
-                        var json_url = "http://maps.googleapis.com/maps/api/geocode/json?address=" + cityName + "&sensor=false";
-                        // Actually get the JSON url, parse it and use the info to set the image on the map and display all the other info
-                        $.ajax({
-                            type: 'GET',
-                            url: json_url,
-                            dataType: 'json',
-                            success: function(data) {
-                                var lat = data.results[0].geometry.location.lat;
-                                var lng = data.results[0].geometry.location.lng;
-                                var cityCountry = data.results[0].formatted_address;
-                                var map_center = new google.maps.LatLng(lat,lng);
-                                // Place the image on the map at the random location
-                                cleanMarker();
-                                image_clicked = 0;
-                                building_image.setMap(null);
-                                map.setCenter(map_center);
-                                map.setZoom(14);
-                                setImage(map_center);
-                                population_displaced = parseFloat(4.50) * parseFloat(cityDensity);
-                                surface_displaced = ((parseFloat(4.50) / parseFloat(cityArea)) * parseFloat(100)).toFixed(1);
-                                document.getElementById("area").innerHTML = surface_displaced + "%"
-                                document.getElementById("population").innerHTML = population_displaced
-                                searchBox.value = cityCountry;
-                                addClickListener(map_center);
-                            }
+                        var geocoder = new google.maps.Geocoder();
+                        geocoder.geocode({
+                            address : cityName,
+                            region: 'no'
+                        }, function(results, status){
+                            var map_center= results[0].geometry.location;
+                            var cityCountry = results[0].formatted_address;
+                            // Place the image on the map at the random location
+                            cleanMarker();
+                            image_clicked = 0;
+                            building_image.setMap(null);
+                            map.setCenter(map_center);
+                            map.setZoom(14);
+                            setImage(map_center);
+                            population_displaced = parseFloat(4.50) * parseFloat(cityDensity);
+                            surface_displaced = ((parseFloat(4.50) / parseFloat(cityArea)) * parseFloat(100)).toFixed(1);
+                            document.getElementById("area").innerHTML = surface_displaced + "%"
+                            document.getElementById("population").innerHTML = population_displaced
+                            searchBox.value = cityCountry;
+                            addClickListener(map_center);
                         });
                     }
             }
@@ -285,8 +279,7 @@
         <div id="lower_text" name="lower_text" style="font-family:monospace; font-size:11px; border:hidden; position:absolute; top:132px; left:1219px; height:585px; width:205px";>
             <b>About:</b> The emphasized project in the image is perhaps the most violent scar left by a totalitarian regime through the flesh of a capital making Bucharest the most devastated European city in times of peace. The megalomaniac “Civic Centre”, a materialization of a North Korean vision of modernity, also dubbed “The Socialist Victory” is organised along a monumental axis that short-circuits the scale and the inherited logic of the city, hiding it behind a colossal order decorated mantle. Thus it establishes a new hierarchy on top of which schizophrenically thrones the largest administrative building in Europe known by us as the “House of the People”, today “The Palace of the Parliament”. This project is our baggage, the people of Bucharest’s baggage, and the question that we started with was <em><b>“What would happen if we were to take this baggage with us through the world?”.</b></em>
             <p><b>Instructions:</b> Use the search bar to change the city. The drawing will be projected over the chosen destination keeping its scale and its position will be anchored relative to the centre of the urbanization. To move the drawing, left click and move the newly appeared marker to your desired location. Another click and the marker will disappear. The “Random” button helps with the lack of inspiration!</p>
-            <b>Concept and design:</br></b>Bogdan Ilie</br>Dan Achim
-            <p><b>Contact:</b></br><a href="mailto:hello@portmanteau.ro">hello@portmanteau.ro</a></p>
+            <p><b>Concept and design:</br></b><a href="mailto:hello@portmanteau.ro">Bogdan Ilie</br>Dan Achim</a></p>
         </div>
         <div id="ro_lang" style="position:absolute; top:735px; left:9px;";>
             <a style="text-decoration:none;" type="icon_link" href="http://www.portmanteau.ro"><img style="width:70px; height:30px; border:none;" src="button_en.png"/></a>
