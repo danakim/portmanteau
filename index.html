@@ -6,20 +6,11 @@
         <meta name="description" content="O lecție despre urbanism schizofrenic" />
         <meta name="keywords" content="bucuresti,bucharest,portmanteau,casa poporului,people's house,centrul civic,civic centre,victoria socialismului,comunism,communism,demolari,distrugere,destruction" />
         <link rel="icon" type="image/ico" href="favicon.ico" />
-        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script>
-        <script src="jquery-csv-min.js"></script>
         <style>
             body {
                 font-family: monospace;
-                font-size: 14px;
-            }
-            #map_canvas {
-                position: absolute;
-                top: 15.7%;
-                left: 0.7%;
-                height: 76%;
-                width: 83%;
+                font-size: 16px;
+                line-height: 12px;
             }
             input {
                 border: 1px rgba(0, 0, 0, 1);
@@ -28,9 +19,8 @@
                 font-size: 13px;
                 height: 2.5%;
                 width: 82.9%;
-                position: absolute;
-                top: 11.5%;
-                left: 0.7%;
+                margin-top: 0.2%;
+                float: left;
             }
             input.notfound {
                 border: 1px solid  rgba(255, 0, 0, 0.4);
@@ -38,250 +28,74 @@
                 font-family: monospace;
                 font-size: 13px;
                 height: 2.5%;
-                width: 83%;
-                position: absolute;
-                top: 11.5%;
-                left: 0.7%;
+                width: 82.9%;
+                margin-top: 0.2%;
+                float: left;
             }
         </style>
-
-        <script>
-            // Global variables
-            var map;
-            var cityName;
-            var markersArray = [];
-            var image_clicked = 0;
-            var building_image = new google.maps.GroundOverlay("image_area.png");
-            var map_center = new google.maps.LatLng(44.427178,26.105742);
-            function initialize() {
-                // Initially center the map over Bucharest and place the image on top of it
-                var mapOptions = {
-                    center: map_center,
-                    zoom: 14,
-                    mapTypeId: google.maps.MapTypeId.SATELLITE
-                };
-                map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
-
-                var input = document.getElementById('searchTextField');
-                var autocomplete = new google.maps.places.Autocomplete(input);
-                autocomplete.bindTo('bounds', map);
-
-                var imageBounds = new google.maps.LatLngBounds(
-                    new google.maps.LatLng(44.4032679880013,26.072268031494104),
-                    new google.maps.LatLng(44.45107823568948,26.139215968505823));
-                building_image = new google.maps.GroundOverlay("image_area.png",imageBounds);
-                building_image.setMap(map);
-                addClickListener(map_center);
-
-                // Add a listener for when the user searches for a place
-                google.maps.event.addListener(autocomplete, 'place_changed', function() {
-                    input.className = '';
-                    image_clicked = 0;
-                    var place = autocomplete.getPlace();
-                    var cityName = place.name
-
-                    // If place is not found, return
-                    if (!place.geometry) {
-                        input.className = 'notfound';
-                        return;
-                    }
-
-                    // If place is Bucharest / Bucuresti, set a special center to place the image correctly
-                    if (cityName == 'Bucharest' || cityName == 'Bucuresti') {
-                        var map_center = new google.maps.LatLng(44.427178,26.105742);
-                    } else {
-                        var map_center = place.geometry.location
-                    }
-                    // Place the image on the map at the searched location
-                    building_image.setMap(null);
-                    map.setCenter(map_center);
-                    map.setZoom(14);
-                    setImage(map_center);
-
-                    // Get the city name and look for it through the city database for population and area info
-                    $(document).ready(function() {
-                        $.ajax({
-                            type: "GET",
-                            url: "city_database.txt",
-                            dataType: "text",
-                            success: function(data) {processCsv(data);}
-                        });
-                    });
-                    function processCsv(csv_data) {
-                        var lines = [];
-                        var lines = $.csv.toObjects(csv_data);
-
-                        var area = $.map(lines, function(val) {
-                            return val.name == cityName ? val.area : null;
-                        });
-                        var density = $.map(lines, function(val) {
-                            return val.name == cityName ? val.density : null;
-                        });
-
-                        if (area.length == 0 || density.length == 0) {
-                            document.getElementById('area').innerHTML = "0.0%"
-                            document.getElementById('population').innerHTML = "0"
-                            return;
-                            } else {
-                            population_displaced = parseFloat(4.50) * parseFloat(density[0]);
-                            surface_displaced = ((parseFloat(4.50) / parseFloat(area[0])) * parseFloat(100)).toFixed(1);
-                            document.getElementById('area').innerHTML = surface_displaced + "%"
-                            document.getElementById('population').innerHTML = population_displaced
-                        }
-                    }
-                    // Add a listener for a click on the image to toggle the marker
-                    addClickListener(map_center);
-                });
-            }
-
-            // The function that creates the image overlay relative to a coordinate
-            function setImage(center) {
-                //map.setZoom(14);
-                //var scale = Math.pow(2,map.getZoom());
-                var scale = Math.pow(2,14);
-                var proj = map.getProjection();
-                var wc = proj.fromLatLngToPoint(center);
-                var bounds = new google.maps.LatLngBounds();
-                var sw = new google.maps.Point(((wc.x * scale) - 390)/ scale, ((wc.y * scale) - 390)/ scale);
-                bounds.extend(proj.fromPointToLatLng(sw));
-                var ne = new google.maps.Point(((wc.x * scale) + 390)/ scale, ((wc.y * scale) + 390)/ scale);
-                bounds.extend(proj.fromPointToLatLng(ne));
-                building_image = new google.maps.GroundOverlay("image_area.png",bounds);
-                building_image.setMap(map);
-            }
-
-            // Cleans all the existing markers
-            function cleanMarker() {
-                if (markersArray) {
-                    for (i in markersArray) {
-                        markersArray[i].setMap(null);
-                    }
-                markersArray.length = 0;
-                }
-            }
-
-            // Adds a custom marker used to move the image overlay
-            function initMarker(location) {
-                cleanMarker();
-                marker = new google.maps.Marker({
-                    position: location,
-                    map: map,
-                    icon: 'buldozer.png',
-                    draggable: true
-                });
-                // When dragging the marker has ended, reposition the image overlay
-                google.maps.event.addListener(marker, 'dragend', function(event) {
-                    building_image.setMap(null);
-                    setImage(marker.getPosition());
-                    addClickListener(marker.getPosition());
-                });
-                markersArray.push(marker);
-                image_clicked = 1;
-            }
-
-            // Adds a listener for when the image overlay is clicked to toggle the marker on / off
-            function addClickListener(marker_position) {
-                google.maps.event.addListener(building_image, 'click', function() {
-                    if (image_clicked == 1) {
-                        cleanMarker();
-                        image_clicked = 0;
-                    } else {
-                        initMarker(marker_position);
-                    }
-                });
-            }
-
-            function random() {
-                    var searchBox = document.getElementById("searchTextField");
-                    searchBox.value = "Randomizing..."
-                    $(document).ready(function() {
-                        $.ajax({
-                            type: "GET",
-                            url: "city_database.txt",
-                            dataType: "text",
-                            success: function(data) {getRandom(data);}
-                        });
-                    });
-                    function getRandom(csv_data) {
-                        // Get a random city object from the array, map it and set variables accordingly
-                        var cities = [];
-                        var cities = $.csv.toObjects(csv_data);
-                        var random_city = [];
-                        var random_city = cities[Math.floor(Math.random() * cities.length)];
-                        var city = $.map(random_city, function(val) {
-                            return val;
-                        });
-                        cityName = city[0];
-                        cityArea = city[2];
-                        cityDensity = city[3];
-                        var geocoder = new google.maps.Geocoder();
-                        geocoder.geocode({
-                            address : cityName,
-                            region: 'no'
-                        }, function(results, status){
-                            var map_center= results[0].geometry.location;
-                            var cityCountry = results[0].formatted_address;
-                            // Place the image on the map at the random location
-                            cleanMarker();
-                            image_clicked = 0;
-                            building_image.setMap(null);
-                            map.setCenter(map_center);
-                            map.setZoom(14);
-                            setImage(map_center);
-                            population_displaced = parseFloat(4.50) * parseFloat(cityDensity);
-                            surface_displaced = ((parseFloat(4.50) / parseFloat(cityArea)) * parseFloat(100)).toFixed(1);
-                            document.getElementById("area").innerHTML = surface_displaced + "%"
-                            document.getElementById("population").innerHTML = population_displaced
-                            searchBox.value = cityCountry;
-                            addClickListener(map_center);
-                        });
-                    }
-            }
-
-            // On DOM window load, run all of the above
-            google.maps.event.addDomListener(window, 'load', initialize);
-        </script>
     </head>
     <body>
-        <div id="logo" style="position:absolute; top:2.3%; left:1.7%;">
-            <a href="http://www.portmanteau.ro"><img style="width:100%; height:40%; border:none" src="portmanteau.png"/></a>
-        </div>
-        <div>
-            <input id="searchTextField" type="text">
-        </div>
-        <div id="map_canvas"></div>
-        <div id="population_icon" style="position:absolute; top:2.5%; left:59%">
-            <img style="width:44%; height:24%;" src="population.png">
-        </div>
-        <div id="population" name="population" title="Populație stramutată" style="font-family:monospace; font-size:38px; font-weight:bold; border:hidden; position:absolute; top:3.5%; left:62.5%;";>
-            30600
-        </div>
-        <div id="area_icon" style="position:absolute; top:2.5%; left:72%">
-            <img style="width:54%; height:87%" src="surface.png">
-        </div>
-        <div id="area" name="area" title="Suprafața demolată" style="font-family:monospace; font-size:38px; font-weight:bold; border:hidden; position:absolute; top:3.5%; left:77%;";>
-            1.6%
-        </div>
-        <div id="random" style="position:absolute; top:4.5%; left:85%; border:hidden;">
-            <a href="javascript:random()"><img src="button_random.png" height="25" width="114" /></a>
-        </div>
-        <div id="text" name="upper_text" style="font-family:monospace; font-size:11px; border:hidden; position:absolute; top:10%; left:85%; height:89%; width:14.5%";>
-            <p><b>Simbolurile</b> reprezintă numărul de oameni strămutați pentru a face loc proiectului relativ la densitatea medie și procentul ocupat relativ la suprafața orasului.</p>
-            <b>Despre:</b> Proiectul marcat în imagine este poate cea mai violentă cicatrice făcută de un regim totalitar în carnea unei capitale făcând din București orașul european cel mai devastat pe timp de pace. Un "Centru Civic" megaloman, o materializare a unei viziuni nord coreene asupra modernității. Supranumit și "Victoria Socialismului", este organizat de-a lungul unei axe monumentale care scurtcircuitează scara și structura moștenită a orașului, ascunzându-l pe acesta din urmă în spatele unei mantii decorate cu ordin colosal, pentru a stabili o nouă ierarhie în vârful căreia tronează schizofrenică cea mai mare clădire administrativă din Europa cunoscută de noi drept "Casa Poporului", azi "Palatul Parlamentului". Acest proiect este bagajul nostru, al bucureștenilor, iar întrebarea de la care am plecat a fost <em><b>"Ce s-ar întâmpla dacă ne-am lua bagajul după noi în lume?"</b></em>
-            <p><b>Instructiuni:</b> Folosește bara de căutare pentru a schimba orașul. Desenul se va proiecta peste destinația aleasă păstrându-și scara, poziția fiind ancorată relativ la punctul de centru al orasului. Pentru a muta desenul, fă click stânga pe imagine și mută markerul proaspăt apărut pe noua coordonată. Încă un click și markerul dispare. Butonul "Random" te ajută în lipsă de inspirație!</p>
-            <p><b>Concept și design:</br></b><a href="mailto:hello@portmanteau.ro">Bogdan Ilie</br>Dan Achim</a></p>
-        </div>
-        <div id="ro_lang" style="position:absolute; top:93%; left:0.6%";>
-            <a style="text-decoration:none;" type="icon_link" href="http://www.portmanteau.ro/en"><img style="width:100%; height:62%; border:none;" src="button_ro.png"/></a>
-        </div>
-        <div id="social_buttons" style="position:absolute; top:93%; left:79.2%;";>
-            <div id="facebook_button" style="float:left; margin-right:2px";>
-                <a target="_blank" style="text-decoration:none;" type="icon_link" href="http://www.facebook.com/sharer.php?s=100&p[title]=O lecție despre urbanism schizofrenic&p[url]=http://www.portmanteau.ro&p[images][0]=http://www.portmanteau.ro/portmanteau_logo.png"><img style="width:100%; height:100%; border:none;" src="button_fb.png"/></a>
+        <div id="head" style="width:99%; margin-top:0.9%; margin-left:0.9%;">
+            <div id="head1" style="float:left; width:82.2%;">
+                <div id="logo" style="float:left;">
+                    <a href="http://www.portmanteau.ro"><img style="width:100%; height:40%; border:hidden;" src="portmanteau.png"/></a>
+                </div>
+                <div id="icons" style="float:right;">
+                    <div id="population_container" style="display:inline-block; vertical-align:middle;">
+                        <div id="population_icon" style="display:inline-block; vertical-align:middle; position:relative; right:-27%;">
+                            <img style="width:44%; height:24%;" src="population.png">
+                        </div>
+                        <div id="population" name="population" title="Populație stramutată" style="font-family:monospace; font-size:2.375em; font-weight:bold; border:hidden; display:inline-block; vertical-align:middle;">
+                            30600
+                        </div>
+                    </div>
+                    <div id="area_container" style="display:inline-block; vertical-align:middle;">
+                        <div id="area_icon" style="display:inline-block; vertical-align:middle; position:relative; right:-20%;">
+                            <img style="width:54%; height:87%" src="surface.png">
+                        </div>
+                        <div id="area" title="Suprafața demolată" style="font-family:monospace; font-size:2.375em; font-weight:bold; border:hidden; display:inline-block; vertical-align:middle;">
+                            1.6%
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="twitter_button" style="float:right; margin-left:2px";>
-                <a target="_blank" style="text-decoration:none;" type="icon_link" href="https://twitter.com/share?url=http://www.portmanteau.ro"><img style="width:100%; height:100%; border:none;" src="button_tw.png"/></a>
+            <div id="upper_text" name="upper_text" style="font-family:monospace; font-size:0.687em; border:hidden; height:12%; width:17%; display:inline-block; vertical-align:middle; position:relative; left:1.1%;">
+                <b>Simbolurile</b> reprezintă numărul de oameni strămutați pentru a face loc proiectului relativ la densitate și procentul ocupat din suprafața orasului.
             </div>
         </div>
+        <div id="aside" style="width:99%; margin-top:0.8%; margin-left:0.2%;">
+            <div>
+                <input id="searchTextField" type="text">
+            </div>
+            <div id="random" style="display:inline-block; vertical-align:middle; position:relative; left:1%">
+                <a href="javascript:random()"><img src="button_random.png" height="25" width="114" /></a>
+            </div>
+        </div>
+        <div id="article" style="width:99%; margin-top:0.3%; margin-left:0.2%; margin-bottom:0.4%;">
+            <div id="map_canvas" style="display:inline-block; vertical-align:middle; height:76%; width:83.1%"></div>
+            <div id="lower_text" name="lower_text" style="margin-top:0.4%; float:right; font-family:monospace; font-size:0.687em; border:hidden; height:89%; width:16%;">
+                <b>Despre:</b> Proiectul marcat în imagine este poate cea mai violentă cicatrice făcută de un regim totalitar în carnea unei capitale făcând din București orașul european cel mai devastat pe timp de pace. Un "Centru Civic" megaloman, o materializare a unei viziuni nord coreene asupra modernității. Supranumit și "Victoria Socialismului", este organizat de-a lungul unei axe monumentale care scurtcircuitează scara și structura moștenită a orașului, ascunzându-l pe acesta din urmă în spatele unei mantii decorate cu ordin colosal, pentru a stabili o nouă ierarhie în vârful căreia tronează schizofrenică cea mai mare clădire administrativă din Europa cunoscută de noi drept "Casa Poporului", azi "Palatul Parlamentului". Acest proiect este bagajul nostru, al bucureștenilor, iar întrebarea de la care am plecat a fost <em><b>"Ce s-ar întâmpla dacă ne-am lua bagajul după noi în lume?"</b></em>
+                <p><b>Instructiuni:</b> Folosește bara de căutare pentru a schimba orașul. Desenul se va proiecta peste destinația aleasă păstrându-și scara, poziția fiind ancorată relativ la punctul de centru al orasului. Pentru a muta desenul, fă click stânga pe imagine și mută markerul proaspăt apărut pe noua coordonată. Încă un click și markerul dispare. Butonul "Random" te ajută în lipsă de inspirație!</p>
+                <p><b>Concept și design:</br></b><a href="http://www.linkedin.com/pub/bogdan-ilie/67/454/567">Bogdan Ilie</a></br><a href="http://www.hostatic.ro">Dan Achim</a></br></br><a href="mailto:hello@portmanteau.ro">hello@portmanteau.ro</a></p>
+            </div>
+        </div>
+        <div id="footer" style="width:82.3%; margin-top:0.5%; margin-left:0.2%">
+            <div id="ro_lang" style="display:inline-block; vertical-align:middle;";>
+                <a style="text-decoration:none;" type="icon_link" href="http://www.portmanteau.ro/en"><img style="width:100%; height:62%; border:none;" src="button_ro.png"/></a>
+            </div>
+            <div id="social_buttons" style="float:right;";>
+                <div id="facebook_button" style="float:left; margin-right:2px";>
+                    <a target="_blank" style="text-decoration:none;" type="icon_link" href="http://www.facebook.com/sharer.php?s=100&p[title]=O lecție despre urbanism schizofrenic&p[url]=http://www.portmanteau.ro&p[images][0]=http://www.portmanteau.ro/portmanteau_logo.png"><img style="width:100%; height:100%; border:none;" src="button_fb.png"/></a>
+                </div>
+                <div id="twitter_button" style="float:right; margin-left:2px";>
+                    <a target="_blank" style="text-decoration:none;" type="icon_link" href="https://twitter.com/share?url=http://www.portmanteau.ro"><img style="width:100%; height:100%; border:none;" src="button_tw.png"/></a>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script type="text/javascript" src="jquery-csv-min.js"></script>
+        <script type="text/javascript" src="portmanteau.js"></script>
         <script type="text/javascript">
             var _gaq = _gaq || [];
             _gaq.push(['_setAccount', 'UA-38193417-1']);
