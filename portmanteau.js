@@ -190,10 +190,11 @@ function random() {
     }
 }
 
-// On DOM window load, run all of the above
+// Add a height element to the map canvas, calculated according to window size
 var height = (parseFloat(window.screen.availHeight) * 68) / 100;
 document.getElementById('map_canvas').style.height = height + "px";
-window.onresize = function(event) {
-    document.getElementById('map_canvas').style.height = height + "px";
-}
+//window.onresize = function(event) {
+//    document.getElementById('map_canvas').style.height = height + "px";
+//}
+// On DOM window load, run all of the above
 google.maps.event.addDomListener(window, 'load', initialize);
