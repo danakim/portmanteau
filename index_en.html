@@ -101,16 +101,20 @@
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
         <script type="text/javascript" src="jquery-csv-min.js"></script>
         <script type="text/javascript" src="portmanteau.js"></script>
+        <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
         <script type="text/javascript">
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-38193417-1']);
-            _gaq.push(['_trackPageview']);
-
-            (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-            })();
+            (function(f, a, t, h, o, m){
+                a[h]=a[h]||function(){
+                (a[h].q=a[h].q||[]).push(arguments)
+                };
+                o=f.createElement('script'),
+                m=f.getElementsByTagName('script')[0];
+                o.async=1; o.src=t; o.id='fathom-script';
+                m.parentNode.insertBefore(o,m)
+            })(document, window, '//analytics.hostatic.ro/tracker.js', 'fathom');
+            fathom('set', 'siteId', 'YOJEJ');
+            fathom('trackPageview');
         </script>
+        <!-- / Fathom -->
     </body>
 </html>
